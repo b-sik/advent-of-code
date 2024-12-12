@@ -20,32 +20,38 @@ async function question1() {
         }
     }
 
-    const correctInstructions = updates.filter(
-        (update) =>
-            update
-                .map((num, _, arr) =>
-                    instructions.filter(
-                        (instruction) =>
-                            num === instruction[0] &&
-                            arr.includes(instruction[1])
-                    )
-                )
-                .flatMap((instructions) =>
-                    instructions.map(
-                        (instruction) =>
-                            update.indexOf(instruction[0]) <
-                            update.indexOf(instruction[1])
-                    )
-                )
-                .filter((result) => result === false).length === 0
-    );
+    let incorrectUpdates = [];
 
-    const totalMiddle = correctInstructions.reduce(
+    const correctUpdates = updates.filter((update) => {
+        const isUpdateCorrect = [...update]
+            .map((num, _, arr) =>
+                instructions.filter(
+                    (instruction) =>
+                        num === instruction[0] && arr.includes(instruction[1])
+                )
+            )
+            .flatMap((instructions) =>
+                instructions.map(
+                    (instruction) =>
+                        update.indexOf(instruction[0]) <
+                        update.indexOf(instruction[1])
+                )
+            )
+            .filter((result) => result === false);
+
+        if (isUpdateCorrect.length === 0) {
+            return true;
+        } else {
+            incorrectUpdates.push(update);
+        }
+    });
+
+    const totalMiddle = correctUpdates.reduce(
         (acc, curr, i) => acc + Number(curr[Math.floor(curr.length / 2)]),
         0
     );
 
-    console.log(totalMiddle)
+    console.log(totalMiddle);
 }
 
 question1();
