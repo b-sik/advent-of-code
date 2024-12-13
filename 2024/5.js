@@ -47,11 +47,49 @@ async function question1() {
     });
 
     const totalMiddle = correctUpdates.reduce(
-        (acc, curr, i) => acc + Number(curr[Math.floor(curr.length / 2)]),
+        (acc, curr) => acc + Number(curr[Math.floor(curr.length / 2)]),
         0
     );
 
     console.log(totalMiddle);
+
+    // part 2
+    const correctedUpdates = incorrectUpdates.map((update) => {
+        let dict = {};
+        const corrected = [];
+
+        update.forEach((num) => {
+            dict[num] = instructions
+                .filter(
+                    (instruction) =>
+                        instruction[0] === num &&
+                        update.includes(instruction[1])
+                )
+                .map((instruction) => instruction[1]);
+        });
+
+        while (Object.keys(dict).length > 0) {
+            Object.entries(dict).forEach(([num, deps]) => {
+                if (deps.length === 0) {
+                    corrected.unshift(num);
+                    delete dict[num];
+
+                    Object.entries(dict).forEach(([key, val]) => {
+                        dict[key] = val.filter((v) => v !== num);
+                    });
+                }
+            });
+        }
+
+        return corrected;
+    });
+
+    const totalCorrectedMiddle = correctedUpdates.reduce(
+        (acc, curr) => acc + Number(curr[Math.floor(curr.length / 2)]),
+        0
+    );
+
+    console.log(totalCorrectedMiddle);
 }
 
 question1();
